@@ -1,0 +1,48 @@
+#include <QTRSensors.h> 
+
+
+QTRSensors siguelineas; //variable porcion del siguelineas
+
+const uint8_t SensorCount = 8; 
+
+uint16_t sensorValues[SensorCount]; 
+#define boton 12
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600); 
+  siguelineas.setTypeAnalog(); 
+
+  siguelineas.setSensorPins((const uint8_t[]){26,25,33,32,35,34,39,36}, SensorCount); 
+  siguelineas.setEmitterPin(27); 
+
+  for(int i=0; i <400;i++){
+    siguelineas.calibrate(); 
+  }
+  while(true){
+    if(digitalRead(boton) == 1){
+      break; 
+    }
+    
+  }
+  
+
+}
+
+void loop() {
+  siguelineas.read(sensorValues); 
+
+  int posicion = siguelineas.readLineBlack(sensorValues); 
+  for(int i=0; i < 8; i++){
+    Serial.println(sensorValues[i]);
+    Serial.print(" :3  "); 
+     
+     
+  }
+  Serial.print(" || "); 
+  posicion = map(posicion, 0, 7000, -255, 255);
+  Serial.print(posicion); 
+  Serial.println(" ...   "); 
+  delay(250); 
+
+}
