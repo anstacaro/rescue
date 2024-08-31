@@ -1,4 +1,5 @@
 #include <QTRSensors.h> 
+#include "motores.h"
 
 
 QTRSensors siguelineas; //variable porcion del siguelineas
@@ -7,6 +8,11 @@ const uint8_t SensorCount = 8;
 
 uint16_t sensorValues[SensorCount]; 
 #define boton 12
+
+float kp = 0.3; 
+int ref = 0; 
+int tp = 100; 
+ 
 
 void setup() {
   // put your setup code here, to run once:
@@ -30,6 +36,7 @@ void setup() {
 }
 
 void loop() {
+  
   siguelineas.read(sensorValues); 
 
   int posicion = siguelineas.readLineBlack(sensorValues); 
@@ -44,5 +51,11 @@ void loop() {
   Serial.print(posicion); 
   Serial.println(" ...   "); 
   delay(250); 
+  int error = posicion - ref; 
+  float giro = kp * error; 
+  int izq = tp - giro; 
+  int der = tp + giro; 
+  motor(izq, der); 
+  
 
 }
